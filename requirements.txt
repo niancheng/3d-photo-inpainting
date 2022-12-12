@@ -1,7 +1,12 @@
-opencv-python==4.2.0.32
+cython
+pillow
+matplotlib
+opencv-python>=4.2.0.32,<=4.3.0.38
 vispy==0.6.4
-moviepy==1.0.2
+moviepy>=0.2.1.7.15,<=2.0.0.dev2
 transforms3d==0.3.1
-networkx==2.3
+networkx>=2.0,<=2.8.4
 cynetworkx
 scikit-image
+PyYAML>=5.4.1,<=6.0
+# PyQt5

@@ -23,10 +23,12 @@ from MiDaS.monodepth_net import MonoDepthNet
 import MiDaS.MiDaS_utils as MiDaS_utils
 from bilateral_filtering import sparse_bilateral_filtering
 
+os.environ['MKL_THREADING_LAYER'] = 'GNU'
+
 parser = argparse.ArgumentParser()
 parser.add_argument('--config', type=str, default='argument.yml',help='Configure of post processing')
 args = parser.parse_args()
-config = yaml.load(open(args.config, 'r'))
+config = yaml.load(open(args.config, 'r'), Loader=yaml.FullLoader)
 if config['offscreen_rendering'] is True:
     vispy.use(app='egl')
 os.makedirs(config['mesh_folder'], exist_ok=True)
@@ -47,7 +49,7 @@ for idx in tqdm(range(len(sample_list))):
     sample = sample_list[idx]
     print("Current Source ==> ", sample['src_pair_name'])
     mesh_fi = os.path.join(config['mesh_folder'], sample['src_pair_name'] +'.ply')
-    image = imageio.imread(sample['ref_img_fi'])
+    image = imageio.v2.imread(sample['ref_img_fi'])
 
     print(f"Running depth extraction at {time.time()}")
     if config['use_boostmonodepth'] is True:
