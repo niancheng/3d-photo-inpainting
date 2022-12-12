@@ -1,0 +1,30 @@
+FROM pytorch/pytorch:1.12.1-cuda11.3-cudnn8-runtime
+
+RUN apt update \
+	# 编译wheel包需要gcc，有些镜像不带gcc
+	&& apt install -y gcc \
+		# 虚拟屏幕
+		xvfb \
+		# vispy依赖库
+		fontconfig \
+		# egl库
+		libegl1-mesa-dev \
+		# cv2依赖库
+		libglib2.0-dev libsm6 libxrender1 libxext6 \
+		# PyQt5依赖库，PyQt5需要虚拟屏幕，虚拟屏幕依赖egl
+		# libxcb-icccm4 libxcb-image0 libxcb-keysyms1 libxcb-render-util0 libxcb-xinerama0 libxcb-xkb1 libxkbcommon-x11-0 libdbus-1-3 libxcb-randr0 libxcb-shape0 libxcb-xfixes0\
+    && apt clean -y
+
+COPY hub /root/.cache/torch/hub
+
+COPY requirements.txt requirements.txt
+
+RUN pip install -i https://mirror.baidu.com/pypi/simple/ cython && \
+	pip install -i https://mirror.baidu.com/pypi/simple/ -r requirements.txt && \
+    rm -f requirements.txt
+
+COPY entrypoint /root/entrypoint
+
+ENV DISPLAY :0
+
+ENTRYPOINT ["bash", "/root/entrypoint/run_xvfb.sh"]
